@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# End the processing, if a rewrite already occurred
+RewriteRule ^(frontend|backend)/web/ - [L]
+
+# handle the case of frontend
+RewriteRule .* frontend/web/$0
+
+# Uncomment the following, if you want speaking URL
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+/web)/.*$ $1/index.php
