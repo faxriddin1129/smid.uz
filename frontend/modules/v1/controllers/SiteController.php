@@ -10,7 +10,7 @@ class SiteController extends ApiController
     public $modelClass  = 'common\models\User';
 
     public function actionIndex(){
-        return '\Yii::$app->user->identity';
+        return \Yii::$app->user->identity;
     }
 
 }

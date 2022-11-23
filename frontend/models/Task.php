@@ -3,6 +3,8 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "task".
@@ -20,7 +22,13 @@ use Yii;
 class Task extends \yii\db\ActiveRecord
 {
 
-
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+            BlameableBehavior::class
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -37,6 +45,7 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             [['number', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['title', 'description', 'status', 'number'], 'required'],
             [['title', 'description'], 'string', 'max' => 255],
         ];
     }
