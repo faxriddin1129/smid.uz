@@ -3,7 +3,10 @@
 namespace common\components;
 
 use yii\data\ActiveDataFilter;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\HttpBearerAuth;
 use yii\filters\ContentNegotiator;
+use yii\filters\Cors;
 use yii\filters\RateLimiter;
 use yii\helpers\ArrayHelper;
 use yii\rest\Controller;
@@ -41,7 +44,9 @@ abstract class ApiController extends  Controller
      */
     public function behaviors()
     {
-        return ArrayHelper::merge(parent::behaviors(), [
+        $behaviors = parent::behaviors();
+
+        $behaviors = ArrayHelper::merge(parent::behaviors(), [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'formats' => [
@@ -59,6 +64,38 @@ abstract class ApiController extends  Controller
                 'class' => RateLimiter::className(),
             ],
         ]);
+
+        $behaviors['authenticator'] = [
+            'class' => CompositeAuth::class,
+            'except' => [
+                'user/login',
+                'user/signup',
+                '*/options',
+            ],
+            'optional' => [
+                'default/*'
+            ],
+            'authMethods' => [
+                HttpBearerAuth::class,
+            ],
+        ];
+
+        $behaviors['corsFilter'] = [
+            'class' => Cors::class,
+            'cors' => [
+                'Origin' => '*',
+                'Access-Control-Request-Method' => ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
+                'Access-Control-Max-Age' => 3600,
+                'Access-Control-Request-Headers' => ['*'],
+                'Access-Control-Expose-Headers' => ['*'],
+                'Access-Control-Allow-Credentials' => false,
+                'Access-Control-Allow-Methods' => ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
+                'Access-Control-Allow-Headers' => ['Authorization', 'X-Requested-With', 'content-type'],
+            ],
+        ];
+
+        return  $behaviors;
+
     }
 
     /**

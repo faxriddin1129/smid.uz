@@ -26,45 +26,6 @@ class Module extends \yii\base\Module
         // custom initialization code goes here
     }
 
-
-    public function behaviors()
-    {
-        $behaviors = parent::behaviors();
-
-        $behaviors['authenticator'] = [
-            'class' => CompositeAuth::class,
-            'except' => [
-                'user/sign-in',
-                'user/index',
-                'user/sign-up',
-                '*/options',
-            ],
-            'optional' => [
-                'default/*'
-            ],
-            'authMethods' => [
-                HttpBearerAuth::class,
-            ],
-        ];
-
-        $behaviors['corsFilter'] = [
-            'class' => Cors::class,
-            'cors' => [
-                'Origin' => static::allowedDomains(),
-                'Access-Control-Request-Method' => ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
-                'Access-Control-Max-Age' => 3600,
-                'Access-Control-Request-Headers' => ['*'],
-                'Access-Control-Expose-Headers' => ['*'],
-                'Access-Control-Allow-Credentials' => false,
-                'Access-Control-Allow-Methods' => ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
-                'Access-Control-Allow-Headers' => ['Authorization', 'X-Requested-With', 'content-type'],
-            ],
-        ];
-
-        return $behaviors;
-    }
-
-
     /**
      * @var array
      */
@@ -88,20 +49,25 @@ class Module extends \yii\base\Module
                 'OPTIONS <action>' => 'options',
                 'OPTIONS ' => 'options',
 
-                'OPTIONS sign-in' => 'options',
-                'POST sign-in' => 'sign-in',
-
-                'OPTIONS sign-up' => 'options',
-                'POST sign-up' => 'sign-up',
-
-                'OPTIONS get-me' => 'options',
-                'GET get-me' => 'get-me',
+                'OPTIONS index' => 'options',
+                'GET index' => 'index',
             ]
         ],
 
         [
             'class' => 'yii\rest\UrlRule',
-            'controller' => 'v1/provider',
+            'controller' => 'v1/site',
+            'pluralize' => false,
+            'patterns' => [
+                'OPTIONS <action>' => 'options',
+                'OPTIONS' => 'options',
+                'GET' => 'index',
+            ]
+        ],
+
+        [
+            'class' => 'yii\rest\UrlRule',
+            'controller' => 'v1/task',
             'pluralize' => false,
             'patterns' => [
                 'OPTIONS <action>' => 'options',

@@ -59,7 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_INACTIVE],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
     }
@@ -216,14 +216,37 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
+    public function updateToken()
+    {
+        return $this->updateAttributes([
+            'token' => self::generateToken()
+        ]);
+    }
+
+
     public static function generateToken()
     {
         return \Yii::$app->security->generateRandomString(64);
     }
 
-
+    /**
+     * @throws \yii\base\Exception
+     */
     public function setToken()
     {
         $this->token = self::generateToken();
     }
+
+    public function fields()
+    {
+        return [
+            'username',
+            'email',
+            'status',
+            'created_at',
+            'updated_at',
+            'token',
+        ];
+    }
+
 }
