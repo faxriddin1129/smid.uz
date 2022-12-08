@@ -19,9 +19,4 @@ class TaskController extends CrudController
         return $search->search(\Yii::$app->request->queryParams);
     }
 
-//    public function actionCreate(){
-//        return 'null';
-//    }
-
-
 }

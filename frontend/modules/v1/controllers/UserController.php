@@ -2,19 +2,37 @@
 
 namespace frontend\modules\v1\controllers;
 
+
+use common\components\ApiController;
 use common\models\LoginForm;
+use common\modules\user\models\User;
+use common\modules\user\models\UserSearch;
 use frontend\models\SignupForm;
 use Yii;
-use yii\rest\Controller;
+use yii\base\InvalidConfigException;
+use yii\rest\OptionsAction;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
+    public $modelClass = User::class;
+    public $searchModel = UserSearch::class;
 
-    public $modelClass  = 'common\models\User';
-
-    public function actionLogin()
+    public function actions()
     {
+        return [
+            'options' => OptionsAction::class
+        ];
+    }
 
+    public function actionIndex(){
+        return "User v1 Controller";
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    public function actionSignIn()
+    {
         $model = new LoginForm();
         $queryParams = Yii::$app->getRequest()->getBodyParams();
         $model->setAttributes($queryParams);
@@ -26,8 +44,10 @@ class UserController extends Controller
         return $user;
     }
 
-
-    public function actionSignup()
+    /**
+     * @throws InvalidConfigException
+     */
+    public function actionSignUp()
     {
         $model = new SignupForm();
         $queryParams = Yii::$app->getRequest()->getBodyParams();
@@ -38,5 +58,11 @@ class UserController extends Controller
 
         return $model;
     }
+
+    public function actionGetMe()
+    {
+        return \Yii::$app->user->identity;
+    }
+
 
 }
